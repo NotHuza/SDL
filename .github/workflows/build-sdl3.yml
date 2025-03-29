@@ -24,7 +24,7 @@ jobs:
       - name: Set up Android NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r26b  # Adjust if necessary
+          ndk-version: r26b
           local-cache: true
 
       - name: Configure and Build SDL3 (arm64-v8a)
@@ -37,10 +37,13 @@ jobs:
             -DBUILD_SHARED_LIBS=ON \
             -DSDL_STATIC=OFF \
             -DSDL_SHARED=ON \
+            -DSDL3_BUILD_SHARED_LIBS=ON \
             -GNinja
           ninja
+          find . -name "*.so" || echo "Shared library not found!"
 
       - name: Upload libSDL3.so
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: libSDL3-arm64-v8a
